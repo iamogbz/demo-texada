@@ -10,6 +10,12 @@ class Package(models.Model):
 
     description = models.CharField(max_length=140, blank=False)
 
+    def __str__(self):
+        return self.description
+
+    def __unicode__(self):
+        return str(self).encode()
+
     class Meta:
         ordering = ('id',)
 
@@ -31,6 +37,13 @@ class Status(models.Model):
     latitude = models.DecimalField(max_digits=12, decimal_places=8)
     longitude = models.DecimalField(max_digits=12, decimal_places=8)
     elevation = models.DecimalField(max_digits=7, decimal_places=3)
+
+    def __str__(self):
+        return "{0} at lat({1}) lng({2}), {3} metres high".format(
+            self.created, self.latitude, self.longitude, self.elevation)
+
+    def __unicode__(self):
+        return str(self).encode()
 
     class Meta:
         ordering = ('package', 'created',)
