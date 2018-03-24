@@ -23,10 +23,11 @@ Status of a package
 """
 class Status(models.Model):
     created = models.DateTimeField(auto_now_add=True)
+    created = models.DateTimeField(editable=False)
     package = models.ForeignKey(Package, on_delete=models.PROTECT)
     latitude = models.DecimalField(max_digits=12, decimal_places=8)
     longitude = models.DecimalField(max_digits=12, decimal_places=8)
     elevation = models.DecimalField(max_digits=7, decimal_places=3)
 
     class Meta:
-        ordering = ('package_id','created',)
+        ordering = ('package', 'created',)
