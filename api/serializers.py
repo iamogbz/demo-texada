@@ -1,6 +1,5 @@
 from rest_framework import serializers
-from .models import Package
-from .models import Status
+from .models import Package, Status
 
 
 class PackageSerializer(serializers.ModelSerializer):
