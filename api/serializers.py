@@ -3,9 +3,12 @@ from .models import Package, Status
 
 
 class PackageSerializer(serializers.ModelSerializer):
+    tracking = serializers.HyperlinkedRelatedField(
+        many=True, read_only=True, view_name='status-detail')
+
     class Meta:
         model = Package
-        fields = ('id', 'description',)
+        fields = ('id', 'description', 'tracking',)
 
 
 class StatusSerializer(serializers.HyperlinkedModelSerializer):
