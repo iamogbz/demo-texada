@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils import datetime_safe as datetimes
 
 
 class Package(models.Model):
@@ -30,8 +31,8 @@ class Status(models.Model):
     .elevation = Vertical elevation of package in metres to 3 decimal places (millimetre)
     """
 
-    created = models.DateTimeField(auto_now_add=True)
-    created = models.DateTimeField(editable=False)
+    created = models.DateTimeField(
+        editable=False, default=datetimes.datetime.now)
     package = models.ForeignKey(
         Package, on_delete=models.PROTECT, related_name="tracking")
     latitude = models.DecimalField(max_digits=12, decimal_places=8)

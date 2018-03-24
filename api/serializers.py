@@ -7,7 +7,7 @@ class StatusSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Status
         fields = ('id', 'package', 'latitude',
-                  'longitude', 'elevation', 'url')
+                  'longitude', 'elevation', 'created', 'url')
 
 
 class PackageStatusSerializer(StatusSerializer):
