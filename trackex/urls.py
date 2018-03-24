@@ -6,8 +6,8 @@ from api import views as api_views
 router = routers.DefaultRouter()
 router.register(r'users', views.UserViewSet)
 router.register(r'groups', views.GroupViewSet)
+router.register(r'status', api_views.StatusViewSet)
 router.register(r'packages', api_views.PackageViewSet)
-router.register(r'tracking', api_views.StatusViewSet)
 
 # Wire up our API using automatic URL routing.
 # Additionally, we include login URLs for the browsable API.
