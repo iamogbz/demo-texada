@@ -3,7 +3,6 @@ import prepare
 
 from django.test import SimpleTestCase
 from django.test import TestCase
-from django.db.models import Model
 from .models import *
 
 
