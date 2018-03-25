@@ -46,4 +46,4 @@ class Status(models.Model):
         return str(self).encode()
 
     class Meta:
-        ordering = ('package', 'created',)
+        ordering = ('-created',)
