@@ -1,4 +1,5 @@
 from django.http import JsonResponse
+from django.db.models import ProtectedError
 from rest_framework import generics, mixins, status, views, viewsets
 from rest_framework.exceptions import APIException
 from rest_framework.decorators import detail_route, list_route
