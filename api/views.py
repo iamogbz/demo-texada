@@ -51,6 +51,7 @@ class PackageViewSet(viewsets.ModelViewSet):
 
 class StatusViewSet(mixins.ListModelMixin,
                     mixins.RetrieveModelMixin,
+                    mixins.DestroyModelMixin,
                     viewsets.GenericViewSet):
     """
     API endpoint that allows status to be created and viewed.
