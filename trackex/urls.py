@@ -3,7 +3,7 @@ from rest_framework import routers
 from quickstart import views
 from api import views as api_views
 
-router = routers.DefaultRouter()
+router = routers.DefaultRouter(trailing_slash=False)
 router.register(r'users', views.UserViewSet)
 router.register(r'groups', views.GroupViewSet)
 router.register(r'status', api_views.StatusViewSet)
