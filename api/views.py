@@ -1,5 +1,9 @@
+from django.http import JsonResponse
+from rest_framework import status, viewsets
+from rest_framework.exceptions import APIException
+from rest_framework.views import exception_handler
+
 from .models import Package, Status
-from rest_framework import viewsets
 from .serializers import PackageSerializer, StatusSerializer
 
 
@@ -9,6 +13,18 @@ class PackageViewSet(viewsets.ModelViewSet):
     """
     queryset = Package.objects.all()
     serializer_class = PackageSerializer
+
+    def destroy(self, request, *args, **kwargs):
+        try:
+            return super().destroy(request, *args, **kwargs)
+        except ProtectedError as exception:
+            detail = 'Can not delete package with tracking information'
+            print(detail)
+            exc = APIException(detail)
+            exc.status_code = status.HTTP_400_BAD_REQUEST
+            response = exception_handler(exc, None)
+            return response
+
 
 
 class StatusViewSet(viewsets.ModelViewSet):
