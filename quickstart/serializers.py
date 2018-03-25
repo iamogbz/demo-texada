@@ -15,9 +15,6 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
         return super().create(self.secure_password(validated_data))
 
     def update(self, instance, validated_data):
-        if "password" in validated_data:
-            pw = validated_data['password']
-            validated_data['password'] = make_password(pw)
         return super().update(instance, self.secure_password(validated_data))
 
     class Meta:
