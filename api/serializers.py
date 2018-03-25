@@ -11,6 +11,13 @@ class StatusSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class PackageStatusSerializer(StatusSerializer):
+
+    class Meta:
+        model = Status
+        fields = ('id', 'package', 'latitude',
+                  'longitude', 'elevation', 'created', 'url')
+        extra_kwargs = {'package': {'read_only': True}}
+
     def to_representation(self, instance):
         # get the default representation
         ret = super().to_representation(instance)
