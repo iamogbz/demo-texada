@@ -27,7 +27,9 @@ class PackageStatusSerializer(StatusSerializer):
 
 class PackageSerializer(serializers.ModelSerializer):
     tracking = PackageStatusSerializer(many=True, read_only=True)
+    status = serializers.HyperlinkedIdentityField(
+        view_name='package-tracking')
 
     class Meta:
         model = Package
-        fields = ('id', 'description', 'tracking', 'url')
+        fields = ('id', 'description', 'status', 'tracking', 'url')
