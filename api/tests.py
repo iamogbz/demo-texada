@@ -110,6 +110,9 @@ class StatusModelTest(TestCase):
         self.assertIsNotNone(status)
         status.save()
         self.assertIsNotNone(status.pk)
+        created = status.created
+        status.refresh_from_db()
+        self.assertEqual(created, status.created)
 
     def test_cannot_save_invalid_data(self):
         """
