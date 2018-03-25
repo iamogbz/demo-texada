@@ -26,17 +26,17 @@ class Status(models.Model):
     Status of a package
     .created = Server time of the status update
     .package = Foreign key relationship to package (package_id)
-    .latitude = Latitude of package to 8 decimal places
-    .longitude = Longitude of package to 8 decimal places
+    .latitude = Latitude of package to 6 decimal places
+    .longitude = Longitude of package to 6 decimal places
     .elevation = Vertical elevation of package in metres to 3 decimal places (millimetre)
     """
 
     created = models.DateTimeField(editable=False, default=timezone.now)
     package = models.ForeignKey(
         Package, on_delete=models.PROTECT, related_name="tracking")
-    latitude = models.DecimalField(max_digits=12, decimal_places=8)
-    longitude = models.DecimalField(max_digits=12, decimal_places=8)
-    elevation = models.DecimalField(max_digits=7, decimal_places=3)
+    latitude = models.DecimalField(max_digits=8, decimal_places=6)
+    longitude = models.DecimalField(max_digits=9, decimal_places=6)
+    elevation = models.DecimalField(max_digits=8, decimal_places=3)
 
     def __str__(self):
         return "{0} at lat({1}) lng({2}), {3} metres high".format(
