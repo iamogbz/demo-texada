@@ -14,25 +14,30 @@ class EnviromentTest(SimpleTestCase):
 
     def test_has_secret_key(self):
         value = os.getenv('SECRET')
-        self.assertIsNotNone(value)
-        self.assertGreater(len(value), 16)
+        self.assertIsNotNone(value, 'missing "SECRET" value in .env')
+        self.assertGreater(len(value), 16,
+                           '"SECRET" should be at least 16 characters')
 
     def test_has_database_test(self):
         value = os.getenv('DB_TEST')
-        self.assertIsNotNone(value)
-        self.assertIsNot(value, '')
+        fail_msg = 'missing "DB_TEST" in .env'
+        self.assertIsNotNone(value, fail_msg)
+        self.assertIsNot(value, fail_msg)
 
     def test_has_database_name(self):
         value = os.getenv('DB_NAME')
-        self.assertIsNotNone(value)
-        self.assertIsNot(value, '')
+        fail_msg = 'missing "DB_NAME" in .env'
+        self.assertIsNotNone(value, fail_msg)
+        self.assertIsNot(value, '', fail_msg)
 
-    def test_has_database_name(self):
+    def test_has_database_pass(self):
         value = os.getenv('DB_PASS')
-        self.assertIsNotNone(value)
-        self.assertIsNot(value, '')
+        fail_msg = 'missing "DB_PASS" in .env'
+        self.assertIsNotNone(value, fail_msg)
+        self.assertIsNot(value, '', fail_msg)
 
     def test_has_database_user(self):
         value = os.getenv('DB_USER')
-        self.assertIsNotNone(value)
-        self.assertIsNot(value, '')
+        fail_msg = 'missing "DB_USER" in .env'
+        self.assertIsNotNone(value, fail_msg)
+        self.assertIsNot(value, '', fail_msg)
