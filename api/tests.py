@@ -95,3 +95,51 @@ class PackageModelTest(TestCase):
             self.fail('Package was not deleted')
         except exceptions.ObjectDoesNotExist:
             pass
+
+
+class StatusModelTest(TestCase):
+    """
+    Test package status model and methods
+    """
+
+    def test_can_build_and_save_model(self):
+        pkg = Package(description='unnec')
+        pkg.save()
+        data = {'latitude': 90, 'longitude': 180, 'elevation': 1}
+        status = Status(package=pkg, **data)
+        self.assertIsNotNone(status)
+        status.save()
+        self.assertIsNotNone(status.pk)
+
+    def test_cannot_save_invalid_data(self):
+        """
+        TODO PROPER MODEL VALIDATION
+        latitude range is -90 -> 90
+        longitude range is -180 -> 180
+        elevation range is -99999 -> 99999
+        """
+        pkg = Package(description='unnec')
+        pkg.save()
+        data = {'latitude': -100, 'longitude': 240, 'elevation': 1000000}
+        status = Status(package=pkg, **data)
+        fail_msg = 'invalid data{0} allowed'
+        try:
+            with transaction.atomic():
+                status.save()
+            self.fail(fail_msg.format(data))
+        except:
+            pass
+        data['latitude'] = 45  # set only latitude to valid
+        try:
+            with transaction.atomic():
+                status.save()
+            self.fail(fail_msg.format(data))
+        except:
+            pass
+        data['longitude'] = 0  # set only longitude to valid
+        try:
+            with transaction.atomic():
+                status.save()
+            self.fail(fail_msg.format(data))
+        except:
+            pass
