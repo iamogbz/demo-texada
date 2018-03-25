@@ -2,6 +2,7 @@ from django.http import JsonResponse
 from rest_framework import generics, mixins, status, views, viewsets
 from rest_framework.exceptions import APIException
 from rest_framework.decorators import detail_route, list_route
+from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.response import Response
 from rest_framework.views import exception_handler
 
@@ -14,6 +15,7 @@ class PackageViewSet(viewsets.ModelViewSet):
     API endpoint that allows packages to be tracked or updated.
     """
     queryset = Package.objects.all()
+    pagination_class = LimitOffsetPagination
 
     def destroy(self, request, *args, **kwargs):
         try:
@@ -36,10 +38,11 @@ class PackageViewSet(viewsets.ModelViewSet):
         Handle showing and updating of tracking information
         """
         if (request.method == 'GET'):
-            statuses = Status.objects.filter(package=pk)
+            statuses = self.paginate_queryset(
+                Status.objects.filter(package=pk))
             serializer = PackageStatusSerializer(
                 statuses, many=True, context={'request': request})
-            return Response(serializer.data)
+            return self.get_paginated_response(serializer.data)
         elif (request.method == 'POST'):
             data = request.data.copy()
             data['package'] = PackageSerializer(
