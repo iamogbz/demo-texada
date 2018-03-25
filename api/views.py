@@ -1,5 +1,5 @@
 from django.http import JsonResponse
-from rest_framework import status, viewsets
+from rest_framework import generics, mixins, status, views, viewsets
 from rest_framework.exceptions import APIException
 from rest_framework.decorators import detail_route, list_route
 from rest_framework.response import Response
@@ -49,7 +49,9 @@ class PackageViewSet(viewsets.ModelViewSet):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class StatusViewSet(viewsets.ModelViewSet):
+class StatusViewSet(mixins.ListModelMixin,
+                    mixins.RetrieveModelMixin,
+                    viewsets.GenericViewSet):
     """
     API endpoint that allows status to be created and viewed.
     """
