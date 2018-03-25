@@ -11,7 +11,7 @@ from .serializers import *
 
 class PackageViewSet(viewsets.ModelViewSet):
     """
-    API endpoint that allows packages to be viewed or edited.
+    API endpoint that allows packages to be tracked or updated.
     """
     queryset = Package.objects.all()
 
@@ -32,6 +32,9 @@ class PackageViewSet(viewsets.ModelViewSet):
 
     @detail_route(methods=['GET', 'POST'], url_path='tracking')
     def get_tracking(self, request, pk, format=None):
+        """
+        Handle showing and updating of tracking information
+        """
         if (request.method == 'GET'):
             statuses = Status.objects.filter(package=pk)
             serializer = PackageStatusSerializer(
@@ -54,7 +57,7 @@ class StatusViewSet(mixins.ListModelMixin,
                     mixins.DestroyModelMixin,
                     viewsets.GenericViewSet):
     """
-    API endpoint that allows status to be created and viewed.
+    API endpoint that allows status to be viewed or modified.
     """
     queryset = Status.objects.all()
     serializer_class = StatusSerializer
