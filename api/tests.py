@@ -54,10 +54,11 @@ class PackageModelTest(TestCase):
     """
 
     def test_can_build_model(self):
-        description = 'short description'
-        package = Package(description=description)
-        self.assertIsNotNone(package)
-        self.assertEqual(package.description, description)
+        desc = 'short description'
+        package = Package(description=desc)
+        self.assertIsNotNone(package, 'could not build package')
+        self.assertEqual(package.description, desc, 'package built wrong')
+        self.assertEqual(str(package), desc, 'package not human readable')
 
     def test_description_size_limit(self):
         max_len = 140
