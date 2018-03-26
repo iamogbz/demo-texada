@@ -226,3 +226,24 @@ class ApiEndpointsTest(FixtureTestCase):
                          "Package could not be updated")
         self.assertEqual(desc, response.data['description'],
                          "Package unsuccessfully updated")
+
+    def test_delete_package(self):
+        """
+        Test deleting package with proper permissions
+        """
+        user = User.objects.get(username='demoer')
+        self.client.force_authenticate(user)
+        url = reverse('package-detail', kwargs={'pk': 2})
+        response = self.client.delete(url)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN,
+                         "Package deleted without proper permission")
+        user = User.objects.get(username='admin')
+        self.client.force_authenticate(user)
+        response = self.client.delete(url)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST,
+                         "Package with tracking info wrongly deleted")
+        pkg = Package.objects.get(id=2)
+        statuses = Status.objects.filter(package=pkg).delete()
+        response = self.client.delete(url)
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT,
+                         "Wrong http status for successful deletion")
