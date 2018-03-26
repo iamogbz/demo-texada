@@ -74,8 +74,7 @@ class PackageModelTest(TestCase):
     def test_can_persist_model(self):
         package = Package(description='short description')
         package.save()
-        test_pkg = Package(package.pk)
-        test_pkg.refresh_from_db()
+        test_pkg = Package.objects.get(id=package.pk)
         self.assertEqual(package.description, test_pkg.description)
         new_desc = 'new description'
         package.description = new_desc
@@ -86,8 +85,7 @@ class PackageModelTest(TestCase):
     def test_can_delete_model(self):
         package = Package(description='unnec')
         package.save()
-        test_pkg = Package(package.pk)
-        test_pkg.refresh_from_db()
+        test_pkg = Package.objects.get(id=package.pk)
         self.assertEqual(package.description, test_pkg.description)
         package.delete()
         try:
