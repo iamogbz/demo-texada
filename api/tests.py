@@ -332,3 +332,51 @@ class ApiEndpointsTest(FixtureTestCase):
         response = self.client.delete(url)
         self.assert_http(response, status.HTTP_204_NO_CONTENT,
                          "Wrong http status for successful deletion")
+
+    def test_get_package_statuses(self):
+        """
+        Test get package tracking list
+        Test pagination
+        """
+        url = reverse('package-tracking', kwargs={'pk': 2})
+        limit = 1
+        response = self.client.get(url, {'limit': limit, 'offset': 1})
+        self.assert_http(response, status.HTTP_200_OK,
+                         "Can not package tracking history")
+        self.assertEqual(len(response.data['results']), limit,
+                         'List not properly paginated')
+        limit = 10
+        response = self.client.get(url, {'limit': limit, 'offset': 0})
+        self.assertLessEqual(len(response.data['results']),
+                             limit, 'List not properly paginated')
+        pass
+
+    def test_update_package_status(self):
+        """
+        Test add package status
+        """
+        msg_tmpl = 'Wrong response to invalid data {0}'
+        url = reverse('package-tracking', kwargs={'pk': 3})
+        data = {'latitude': -100, 'longitude': 240, 'elevation': 1000000}
+        response = self.client.post(url, data)
+        self.assert_http(response, status.HTTP_403_FORBIDDEN,
+                         "Should have gotten a forbidden status")
+        user = User.objects.get(username='demoer')
+        self.client.force_authenticate(user)
+        response = self.client.post(url, data)
+        self.assert_http(response, status.HTTP_400_BAD_REQUEST,
+                         msg_tmpl.format(data))
+        data['latitude'] = 45  # set only latitude to valid
+        response = self.client.post(url, data)
+        self.assert_http(response, status.HTTP_400_BAD_REQUEST,
+                         msg_tmpl.format(data))
+        data['longitude'] = 0  # set only longitude to valid
+        response = self.client.post(url, data)
+        self.assert_http(response, status.HTTP_400_BAD_REQUEST,
+                         msg_tmpl.format(data))
+        data['elevation'] = 1000  # set valid elevation
+        response = self.client.post(url, data)
+        self.assert_http(response, status.HTTP_201_CREATED,
+                         "Status not successfully created")
+        self.assertEqual(45, response.data['latitude'],
+                         'Incorrect tracking details created')
