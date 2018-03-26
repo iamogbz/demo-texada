@@ -26,7 +26,7 @@ load_dotenv(verbose=True, dotenv_path='.env')
 SECRET_KEY = os.getenv('SECRET')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.getenv('DEBUG')
+DEBUG = int(os.getenv('DEBUG'))
 
 ALLOWED_HOSTS = ['localhost', 'demo-texada.app', 'testserver']
 
