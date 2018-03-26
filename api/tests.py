@@ -315,3 +315,20 @@ class ApiEndpointsTest(FixtureTestCase):
         response = self.client.patch(url, data)
         self.assert_http(response, status.HTTP_405_METHOD_NOT_ALLOWED,
                          "Status can be modified with PATCH")
+
+    def test_delete_status(self):
+        """
+        Test delete without authorisation
+        Test delete status
+        """
+        user = User.objects.get(username='demoer')
+        self.client.force_authenticate(user)
+        url = reverse('status-detail', kwargs={'pk': 4})
+        response = self.client.delete(url)
+        self.assert_http(response, status.HTTP_403_FORBIDDEN,
+                         "Status deleted without proper permission")
+        user = User.objects.get(username='admin')
+        self.client.force_authenticate(user)
+        response = self.client.delete(url)
+        self.assert_http(response, status.HTTP_204_NO_CONTENT,
+                         "Wrong http status for successful deletion")
