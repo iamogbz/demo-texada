@@ -162,16 +162,19 @@ class ApiEndpointsTest(FixtureTestCase):
     thus also checking serializers, views
     """
 
+    def assert_http(self, response, status, message=None):
+        self.assertEqual(response.status_code, status, message)
+
     def test_root_endpoint(self):
         url = reverse('api-root')
         response = self.client.get(url)
-        self.assertEqual(response.status_code, status.HTTP_200_OK,
+        self.assert_http(response, status.HTTP_200_OK,
                          "Can not access api-root")
 
     def test_get_packages(self):
         url = reverse('package-list')
         response = self.client.get(url)
-        self.assertEqual(response.status_code, status.HTTP_200_OK,
+        self.assert_http(response, status.HTTP_200_OK,
                          "Can not access package-list")
         self.assertIsNotNone(response.data['results'])
 
@@ -184,18 +187,18 @@ class ApiEndpointsTest(FixtureTestCase):
         data = {}
         # make unauthenticated request
         response = self.client.post(url, data)
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN,
+        self.assert_http(response, status.HTTP_403_FORBIDDEN,
                          "Wrong https status for unauntheticated request")
         # make request again as demoer
         user = User.objects.get(username='demoer')
         self.client.force_authenticate(user)
         response = self.client.post(url, data)
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST,
+        self.assert_http(response, status.HTTP_400_BAD_REQUEST,
                          "Wrong https status for bad post request")
         # make request again with valid fields
         data['description'] = description
         response = self.client.post(url, data)
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED,
+        self.assert_http(response, status.HTTP_201_CREATED,
                          "Package not created successfully")
         # check if all fields are non empty
         for field in ['id', 'url', 'status', 'tracking', 'description']:
@@ -207,14 +210,14 @@ class ApiEndpointsTest(FixtureTestCase):
         self.assertEqual(response.data['tracking'], [],
                          'Package should not have tracking data')
 
-    def test_get_packages(self):
+    def test_get_package(self):
         url = reverse('package-detail', kwargs={'pk': 99})
         response = self.client.get(url)
-        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND,
+        self.assert_http(response, status.HTTP_404_NOT_FOUND,
                          "Wrong status code for missing package")
         url = reverse('package-detail', kwargs={'pk': 2})
         response = self.client.get(url)
-        self.assertEqual(response.status_code, status.HTTP_200_OK,
+        self.assert_http(response, status.HTTP_200_OK,
                          "Can not retrieve status-detail")
 
     def test_update_package(self):
@@ -227,12 +230,12 @@ class ApiEndpointsTest(FixtureTestCase):
         data = {'description': desc}
         url = reverse('package-detail', kwargs={'pk': 2})
         response = self.client.put(url, data)
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN,
+        self.assert_http(response, status.HTTP_403_FORBIDDEN,
                          "Package modified without proper permission")
         user = User.objects.get(username='admin')
         self.client.force_authenticate(user)
         response = self.client.put(url, data)
-        self.assertEqual(response.status_code, status.HTTP_200_OK,
+        self.assert_http(response, status.HTTP_200_OK,
                          "Package could not be updated")
         self.assertEqual(desc, response.data['description'],
                          "Package unsuccessfully updated")
@@ -245,15 +248,15 @@ class ApiEndpointsTest(FixtureTestCase):
         self.client.force_authenticate(user)
         url = reverse('package-detail', kwargs={'pk': 2})
         response = self.client.delete(url)
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN,
+        self.assert_http(response, status.HTTP_403_FORBIDDEN,
                          "Package deleted without proper permission")
         user = User.objects.get(username='admin')
         self.client.force_authenticate(user)
         response = self.client.delete(url)
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST,
+        self.assert_http(response, status.HTTP_400_BAD_REQUEST,
                          "Package with tracking info wrongly deleted")
         pkg = Package.objects.get(id=2)
         statuses = Status.objects.filter(package=pkg).delete()
         response = self.client.delete(url)
-        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT,
+        self.assert_http(response, status.HTTP_204_NO_CONTENT,
                          "Wrong http status for successful deletion")
