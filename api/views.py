@@ -16,6 +16,7 @@ class PackageViewSet(viewsets.ModelViewSet):
     API endpoint that allows packages to be tracked or updated.
     """
     queryset = Package.objects.all()
+    serializer_class = PackageSerializer
     pagination_class = LimitOffsetPagination
 
     def destroy(self, request, *args, **kwargs):
@@ -31,7 +32,7 @@ class PackageViewSet(viewsets.ModelViewSet):
     def get_serializer_class(self):
         if self.action == 'get_tracking':
             return PackageStatusSerializer
-        return PackageSerializer
+        return super().get_serializer_class()
 
     @detail_route(methods=['GET', 'POST'], url_path='tracking')
     def get_tracking(self, request, pk, format=None):
