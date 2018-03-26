@@ -295,3 +295,23 @@ class ApiEndpointsTest(FixtureTestCase):
         for f in ['package', 'latitude', 'longitude', 'elevation', 'created']:
             self.assertIsNotNone(response.data[f],
                                  'Package created response missing '+f)
+
+    def test_update_status(self):
+        """
+        Test update with PUT not allowed
+        Test update with POST not allowed
+        Test update with PATCH not allowed
+        """
+        user = User.objects.get(username='admin')
+        self.client.force_authenticate(user)
+        data = {'latitude': 90, 'longitude': 180, 'elevation': 1}
+        url = reverse('status-detail', kwargs={'pk': 2})
+        response = self.client.put(url, data)
+        self.assert_http(response, status.HTTP_405_METHOD_NOT_ALLOWED,
+                         "Status can be modified with PUT")
+        response = self.client.post(url, data)
+        self.assert_http(response, status.HTTP_405_METHOD_NOT_ALLOWED,
+                         "Status can be modified with POST")
+        response = self.client.patch(url, data)
+        self.assert_http(response, status.HTTP_405_METHOD_NOT_ALLOWED,
+                         "Status can be modified with PATCH")
