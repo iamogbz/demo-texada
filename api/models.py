@@ -14,9 +14,6 @@ class Package(models.Model):
     def __str__(self):
         return self.description
 
-    def __unicode__(self):
-        return str(self).encode()
-
     class Meta:
         ordering = ('id',)
 
@@ -41,9 +38,6 @@ class Status(models.Model):
     def __str__(self):
         return "{0} at lat({1}) lng({2}), {3} metres high".format(
             self.created, self.latitude, self.longitude, self.elevation)
-
-    def __unicode__(self):
-        return str(self).encode()
 
     class Meta:
         ordering = ('-created',)

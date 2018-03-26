@@ -117,6 +117,11 @@ class StatusModelTest(FixtureTestCase):
         data = {'latitude': 90, 'longitude': 180, 'elevation': 1}
         status = Status(package=pkg, **data)
         self.assertIsNotNone(status)
+        self.assertEqual(str(status),
+                         "{0} at lat({1}) lng({2}), {3} metres high"
+                         .format(status.created, status.latitude,
+                                 status.longitude, status.elevation),
+                         'Status fails string representation')
         status.save()
         self.assertIsNotNone(status.pk)
         created = status.created
