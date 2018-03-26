@@ -260,3 +260,38 @@ class ApiEndpointsTest(FixtureTestCase):
         response = self.client.delete(url)
         self.assert_http(response, status.HTTP_204_NO_CONTENT,
                          "Wrong http status for successful deletion")
+
+    def test_get_statuses(self):
+        """
+        Test getting list
+        Test pagination
+        """
+        url = reverse('status-list')
+        limit = 1
+        response = self.client.get(url, {'limit': limit, 'offset': 1})
+        self.assert_http(response, status.HTTP_200_OK,
+                         "Can not retrieve list of statuses")
+        self.assertEqual(len(response.data['results']),
+                         limit, 'List not properly paginated')
+        limit = 10
+        response = self.client.get(url, {'limit': limit, 'offset': 1})
+        self.assertEqual(len(response.data['results']),
+                         limit, 'List not properly paginated')
+
+    def test_get_status(self):
+        """
+        Test getting single status
+        Test get missing status
+        """
+        url = reverse('status-detail', kwargs={'pk': 1})
+        response = self.client.get(url)
+        self.assert_http(response, status.HTTP_404_NOT_FOUND,
+                         'Wrong response for missing status')
+        url = reverse('status-detail', kwargs={'pk': 2})
+        response = self.client.get(url)
+        self.assert_http(response, status.HTTP_200_OK,
+                         'Wrong response for status-detail')
+
+        for f in ['package', 'latitude', 'longitude', 'elevation', 'created']:
+            self.assertIsNotNone(response.data[f],
+                                 'Package created response missing '+f)
