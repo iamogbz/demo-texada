@@ -202,7 +202,7 @@ class ApiEndpointsTest(FixtureTestCase):
                          "Package not created successfully")
         # check if all fields are non empty
         for field in ['id', 'url', 'status', 'tracking', 'description']:
-            self.assertIsNotNone(response.data['id'],
+            self.assertIsNotNone(response.data[field],
                                  'Package created response missing '+field)
         self.assertEqual(response.data['description'], description,
                          'Package created has wrong information')
