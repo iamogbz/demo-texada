@@ -10,6 +10,7 @@ from django.db import transaction
 from django.db import utils
 from django.core import exceptions
 from .models import *
+from rest_framework.test import APITestCase
 
 
 class EnviromentTest(SimpleTestCase):
@@ -48,7 +49,17 @@ class EnviromentTest(SimpleTestCase):
         self.assertIsNot(value, '', fail_msg)
 
 
-class PackageModelTest(TestCase):
+class FixtureTestCase(APITestCase):
+    # fixtures to load for testing
+    fixtures = ['initial_data_api.json']
+
+    def test_fixture_loaded(self):
+        # test that fixture loaded for testing
+        package = Package.objects.get(id=2)
+        self.assertIsNotNone(package)
+
+
+class PackageModelTest(FixtureTestCase):
     """
     Test package model and methods
     """
@@ -83,26 +94,23 @@ class PackageModelTest(TestCase):
         self.assertEqual(test_pkg.description, new_desc)
 
     def test_can_delete_model(self):
-        package = Package(description='unnec')
-        package.save()
-        test_pkg = Package.objects.get(id=package.pk)
-        self.assertEqual(package.description, test_pkg.description)
+        package = Package.objects.get(id=2)
+        statuses = Status.objects.filter(package=package).delete()
         package.delete()
         try:
-            test_pkg.refresh_from_db()
+            package.refresh_from_db()
             self.fail('Package was not deleted')
         except exceptions.ObjectDoesNotExist:
             pass
 
 
-class StatusModelTest(TestCase):
+class StatusModelTest(FixtureTestCase):
     """
     Test package status model and methods
     """
 
     def test_can_build_and_save_model(self):
-        pkg = Package(description='unnec')
-        pkg.save()
+        pkg = Package.objects.get(id=3)
         data = {'latitude': 90, 'longitude': 180, 'elevation': 1}
         status = Status(package=pkg, **data)
         self.assertIsNotNone(status)
@@ -119,8 +127,7 @@ class StatusModelTest(TestCase):
         longitude range is -180 -> 180
         elevation range is -99999 -> 99999
         """
-        pkg = Package(description='unnec')
-        pkg.save()
+        pkg = Package.objects.get(id=3)
         data = {'latitude': -100, 'longitude': 240, 'elevation': 1000000}
         status = Status(package=pkg, **data)
         fail_msg = 'invalid data{0} allowed'
