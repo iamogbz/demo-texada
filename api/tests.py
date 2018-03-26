@@ -10,7 +10,10 @@ from django.db import transaction
 from django.db import utils
 from django.core import exceptions
 from .models import *
+from django.urls import reverse
+from rest_framework import status
 from rest_framework.test import APITestCase
+from django.contrib.auth.models import User
 
 
 class EnviromentTest(SimpleTestCase):
@@ -151,3 +154,75 @@ class StatusModelTest(FixtureTestCase):
             self.fail(fail_msg.format(data))
         except:
             pass
+
+
+class ApiEndpointsTest(FixtureTestCase):
+    """
+    Test package url endpoints
+    thus also checking serializers, views
+    """
+
+    def test_root_endpoint(self):
+        url = reverse('api-root')
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK,
+                         "Can not access api-root")
+
+    def test_get_packages(self):
+        url = reverse('package-list')
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK,
+                         "Can not access package-list")
+        self.assertIsNotNone(response.data['results'])
+
+    def test_create_package(self):
+        """
+        Test creation of package with proper permissions
+        """
+        url = reverse('package-list')
+        description = 'Test Package'
+        data = {}
+        # make unauthenticated request
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN,
+                         "Wrong https status for unauntheticated request")
+        # make request again as demoer
+        user = User.objects.get(username='demoer')
+        self.client.force_authenticate(user)
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST,
+                         "Wrong https status for bad post request")
+        # make request again with valid fields
+        data['description'] = description
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED,
+                         "Package not created successfully")
+        # check if all fields are non empty
+        for field in ['id', 'url', 'status', 'tracking', 'description']:
+            self.assertIsNotNone(response.data['id'],
+                                 'Package created response missing '+field)
+        self.assertEqual(response.data['description'], description,
+                         'Package created has wrong information')
+        # tracking data should be empty at creation
+        self.assertEqual(response.data['tracking'], [],
+                         'Package should not have tracking data')
+
+    def test_update_package(self):
+        """
+        Test modifying package with proper permissions
+        """
+        user = User.objects.get(username='demoer')
+        self.client.force_authenticate(user)
+        desc = 'NewPackageName'
+        data = {'description': desc}
+        url = reverse('package-detail', kwargs={'pk': 2})
+        response = self.client.put(url, data)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN,
+                         "Package modified without proper permission")
+        user = User.objects.get(username='admin')
+        self.client.force_authenticate(user)
+        response = self.client.put(url, data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK,
+                         "Package could not be updated")
+        self.assertEqual(desc, response.data['description'],
+                         "Package unsuccessfully updated")
