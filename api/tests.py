@@ -207,6 +207,16 @@ class ApiEndpointsTest(FixtureTestCase):
         self.assertEqual(response.data['tracking'], [],
                          'Package should not have tracking data')
 
+    def test_get_packages(self):
+        url = reverse('package-detail', kwargs={'pk': 99})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND,
+                         "Wrong status code for missing package")
+        url = reverse('package-detail', kwargs={'pk': 2})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK,
+                         "Can not retrieve status-detail")
+
     def test_update_package(self):
         """
         Test modifying package with proper permissions
