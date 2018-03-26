@@ -354,7 +354,8 @@ class ApiEndpointsTest(FixtureTestCase):
         response = self.client.get(url, {'limit': limit, 'offset': 0})
         self.assertLessEqual(len(response.data['results']),
                              limit, 'List not properly paginated')
-        pass
+        self.assertNotIn('package', response.data['results'][0],
+                             'Status has redundant package field')
 
     def test_update_package_status(self):
         """
