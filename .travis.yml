@@ -19,5 +19,6 @@ script:
   - python manage.py migrate api
   - coverage run --source=. -m unittest
   - coverage xml
+  - coveralls
 after_script:
   - ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT
