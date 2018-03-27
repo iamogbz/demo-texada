@@ -2,13 +2,13 @@ import os
 import prepare
 import string
 import random
+import decimal
 
 from django.test import SimpleTestCase
 from django.test import TestCase
 from django.core import exceptions
 from django.db import transaction
 from django.db import utils
-from django.core import exceptions
 from .models import *
 from django.urls import reverse
 from rest_framework import status
@@ -128,12 +128,8 @@ class StatusModelTest(FixtureTestCase):
                 status = Status(package=pkg, **data)
                 with transaction.atomic():
                     status.save()
-                self.fail()
-            except AssertionError:
-                # catch fail assertion
                 self.fail(fail_msg.format(data))
-            except:
-                # expecting error so do nothing
+            except decimal.InvalidOperation:
                 pass
 
 
