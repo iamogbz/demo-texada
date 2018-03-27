@@ -21,35 +21,16 @@ class EnviromentTest(SimpleTestCase):
     Test that .env file was loaded successfully
     """
 
-    def test_has_secret_key(self):
-        value = os.getenv('SECRET')
-        self.assertIsNotNone(value, 'missing "SECRET" value in .env')
-        self.assertGreater(len(value), 16,
-                           '"SECRET" should be at least 16 characters')
-
-    def test_has_database_test(self):
-        value = os.getenv('DB_TEST')
-        fail_msg = 'missing "DB_TEST" in .env'
-        self.assertIsNotNone(value, fail_msg)
-        self.assertIsNot(value, fail_msg)
-
-    def test_has_database_name(self):
-        value = os.getenv('DB_NAME')
-        fail_msg = 'missing "DB_NAME" in .env'
-        self.assertIsNotNone(value, fail_msg)
-        self.assertIsNot(value, '', fail_msg)
-
-    def test_has_database_pass(self):
-        value = os.getenv('DB_PASS')
-        fail_msg = 'missing "DB_PASS" in .env'
-        self.assertIsNotNone(value, fail_msg)
-        self.assertIsNot(value, '', fail_msg)
-
-    def test_has_database_user(self):
-        value = os.getenv('DB_USER')
-        fail_msg = 'missing "DB_USER" in .env'
-        self.assertIsNotNone(value, fail_msg)
-        self.assertIsNot(value, '', fail_msg)
+    def test_has_database_config(self):
+        for v in ['DB_TEST', 'DB_NAME', 'DB_PASS', 'DB_USER', 'SECRET']:
+            value = os.getenv(v)
+            fail_msg = 'missing "{0}" in .env'.format(v)
+            self.assertIsNotNone(value, fail_msg)
+            if v == 'SECRET':
+                fail_msg = 'env {0} should be at least 16 characters'.format(v)
+                self.assertGreater(len(value), 16, fail_msg)
+            else:
+                self.assertIsNot(value, '', fail_msg)
 
 
 class FixtureTestCase(APITestCase):
@@ -265,7 +246,6 @@ class ApiEndpointsTest(FixtureTestCase):
         response = self.client.delete(url)
         self.assert_http(response, status.HTTP_204_NO_CONTENT,
                          "Wrong http status for successful deletion")
-
 
     def test_get_status(self):
         """
