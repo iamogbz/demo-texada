@@ -326,18 +326,14 @@ class ApiEndpointsTest(FixtureTestCase):
                          "Should have gotten a forbidden status")
         user = User.objects.get(username='demoer')
         self.client.force_authenticate(user)
-        response = self.client.post(url, data)
-        self.assert_http(response, status.HTTP_400_BAD_REQUEST,
-                         msg_tmpl.format(data))
+        valid_data = {'longitude': 0, 'elevation': 1000}
+        for k in data:
+            if k in valid_data:
+                data[k] = valid_data[k]
+            response = self.client.post(url, data)
+            self.assert_http(response, status.HTTP_400_BAD_REQUEST,
+                             msg_tmpl.format(data))
         data['latitude'] = 45  # set only latitude to valid
-        response = self.client.post(url, data)
-        self.assert_http(response, status.HTTP_400_BAD_REQUEST,
-                         msg_tmpl.format(data))
-        data['longitude'] = 0  # set only longitude to valid
-        response = self.client.post(url, data)
-        self.assert_http(response, status.HTTP_400_BAD_REQUEST,
-                         msg_tmpl.format(data))
-        data['elevation'] = 1000  # set valid elevation
         response = self.client.post(url, data)
         self.assert_http(response, status.HTTP_201_CREATED,
                          "Status not successfully created")
