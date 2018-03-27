@@ -3,7 +3,7 @@
 Built for [Texada Software](https://texadasoftware.com/)
 
 [![Build Status](https://travis-ci.org/iamogbz/demo-texada.svg?branch=master)](https://travis-ci.org/iamogbz/demo-texada)
-[![Test Coverage](https://api.codeclimate.com/v1/badges/4c2b22402ea39b2360f8/test_coverage)](https://codeclimate.com/github/iamogbz/demo-texada/test_coverage)
+[![Coverage Status](https://coveralls.io/repos/github/iamogbz/demo-texada/badge.svg?branch=coveralls)](https://coveralls.io/github/iamogbz/demo-texada?branch=coveralls)
 [![Maintainability](https://api.codeclimate.com/v1/badges/4c2b22402ea39b2360f8/maintainability)](https://codeclimate.com/github/iamogbz/demo-texada/maintainability)
 
 ## On Your Marks
@@ -47,5 +47,5 @@ Built for [Texada Software](https://texadasoftware.com/)
   - `coverage report -m`
 
 [![Build Status](https://travis-ci.org/iamogbz/demo-texada.svg?branch=master)](https://travis-ci.org/iamogbz/demo-texada)
-[![Test Coverage](https://api.codeclimate.com/v1/badges/4c2b22402ea39b2360f8/test_coverage)](https://codeclimate.com/github/iamogbz/demo-texada/test_coverage)
+[![Coverage Status](https://coveralls.io/repos/github/iamogbz/demo-texada/badge.svg?branch=coveralls)](https://coveralls.io/github/iamogbz/demo-texada?branch=coveralls)
 [![Maintainability](https://api.codeclimate.com/v1/badges/4c2b22402ea39b2360f8/maintainability)](https://codeclimate.com/github/iamogbz/demo-texada/maintainability)
