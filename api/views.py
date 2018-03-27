@@ -57,8 +57,7 @@ class PackageViewSet(viewsets.ModelViewSet):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class StatusViewSet(mixins.ListModelMixin,
-                    mixins.RetrieveModelMixin,
+class StatusViewSet(mixins.RetrieveModelMixin,
                     mixins.DestroyModelMixin,
                     viewsets.GenericViewSet):
     """
