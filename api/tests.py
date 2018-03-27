@@ -75,13 +75,13 @@ class PackageModelTest(FixtureTestCase):
         self.assertEqual(str(package), desc, 'package not human readable')
 
     def test_description_size_limit(self):
-        max_len = 140
+        limit = 140
         long_desc = ''.join(random.choice(string.ascii_lowercase)
-                            for x in range(max_len + 1))
+                            for x in range(limit + 1))
         package = Package(description=long_desc)
         try:
             package.save()
-            self.fail('Descriptors longer than '+max_len+' chars allowed')
+            self.fail('Descriptor longer than {0} chars allowed'.format(limit))
         except utils.DataError:
             pass
 
@@ -355,7 +355,7 @@ class ApiEndpointsTest(FixtureTestCase):
         self.assertLessEqual(len(response.data['results']),
                              limit, 'List not properly paginated')
         self.assertNotIn('package', response.data['results'][0],
-                             'Status has redundant package field')
+                         'Status has redundant package field')
 
     def test_update_package_status(self):
         """
