@@ -9,8 +9,14 @@ before_install:
   - mysql demo_texada < $TRAVIS_BUILD_DIR/initial_data_quickstart.sql -u demoer -pshowmesomething
 install:
   - pip install -r requirements.txt
+before_script:
+  - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+  - chmod +x ./cc-test-reporter
+  - ./cc-test-reporter before-build
 # command to run tests
 script:
   - python manage.py makemigrations api
   - python manage.py migrate api
   - python -m unittest
+after_script:
+  - ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT
