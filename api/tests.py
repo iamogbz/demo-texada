@@ -118,28 +118,23 @@ class StatusModelTest(FixtureTestCase):
         """
         pkg = Package.objects.get(id=3)
         data = {'latitude': -100, 'longitude': 240, 'elevation': 1000000}
-        status = Status(package=pkg, **data)
+        valid_data = {'latitude': 45, 'longitude': 0}
         fail_msg = 'invalid data{0} allowed'
-        try:
-            with transaction.atomic():
-                status.save()
-            self.fail(fail_msg.format(data))
-        except:
-            pass
-        data['latitude'] = 45  # set only latitude to valid
-        try:
-            with transaction.atomic():
-                status.save()
-            self.fail(fail_msg.format(data))
-        except:
-            pass
-        data['longitude'] = 0  # set only longitude to valid
-        try:
-            with transaction.atomic():
-                status.save()
-            self.fail(fail_msg.format(data))
-        except:
-            pass
+
+        for k in data:
+            if k in valid_data:
+                data[k] = valid_data[k]
+            try:
+                status = Status(package=pkg, **data)
+                with transaction.atomic():
+                    status.save()
+                self.fail()
+            except AssertionError:
+                # catch fail assertion
+                self.fail(fail_msg.format(data))
+            except:
+                # expecting error so do nothing
+                pass
 
 
 class ApiEndpointsTest(FixtureTestCase):
