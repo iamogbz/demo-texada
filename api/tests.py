@@ -146,6 +146,10 @@ class ApiEndpointsTest(FixtureTestCase):
     def assert_http(self, response, status, message=None):
         self.assertEqual(response.status_code, status, message)
 
+    def assert_has_fields(self, resp, msg, *fields):
+        for f in fields:
+            self.assertIsNotNone(resp.data[f], msg.format(f))
+
     def test_root_endpoint(self):
         url = reverse('api-root')
         response = self.client.get(url)
@@ -182,9 +186,8 @@ class ApiEndpointsTest(FixtureTestCase):
         self.assert_http(response, status.HTTP_201_CREATED,
                          "Package not created successfully")
         # check if all fields are non empty
-        for field in ['id', 'url', 'status', 'tracking', 'description']:
-            self.assertIsNotNone(response.data[field],
-                                 'Package created response missing '+field)
+        fields = ['id', 'url', 'status', 'tracking', 'description']
+        self.assert_has_fields(response, 'Package data missing {0}', *fields)
         self.assertEqual(response.data['description'], description,
                          'Package created has wrong information')
         # tracking data should be empty at creation
@@ -256,9 +259,8 @@ class ApiEndpointsTest(FixtureTestCase):
         self.assert_http(response, status.HTTP_200_OK,
                          'Wrong response for status-detail')
 
-        for f in ['package', 'latitude', 'longitude', 'elevation', 'created']:
-            self.assertIsNotNone(response.data[f],
-                                 'Package created response missing '+f)
+        fields = ['package', 'latitude', 'longitude', 'elevation', 'created']
+        self.assert_has_fields(response, 'Tracking data missing {0}', *fields)
 
     def test_update_status(self):
         """
