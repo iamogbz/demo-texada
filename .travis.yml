@@ -1,1 +1,16 @@
 language: python
+python:
+  - "3.6"
+services:
+  - mysql
+before_install:
+  - mysql -e 'CREATE DATABASE demo_texada;'
+  - mysql -e "GRANT ALL PRIVILEGES ON demo_texada.* to 'demoer'@'localhost' identified by 'showmesomething';"
+  - mysql demo_texada < $TRAVIS_BUILD_DIR/initial_data_quickstart.sql -u demoer -pshowmesomething
+install:
+  - pip install -r requirements.txt
+# command to run tests
+script:
+  - python manage.py makemigrations api
+  - python manage.py migrate api
+  - python -m unittest
