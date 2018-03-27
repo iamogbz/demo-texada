@@ -4,9 +4,7 @@ python:
 services:
   - mysql
 before_install:
-  - mysql -e 'CREATE DATABASE demo_texada;'
-  - mysql -e "GRANT ALL PRIVILEGES ON demo_texada.* to 'demoer'@'localhost' identified by 'showmesomething';"
-  - mysql demo_texada < $TRAVIS_BUILD_DIR/initial_data_quickstart.sql -u demoer -pshowmesomething
+  - mysql -e "GRANT ALL PRIVILEGES ON *.* to 'demoer'@'localhost' identified by 'showmesomething';"
 install:
   - pip install -r requirements.txt
 before_script:
@@ -15,9 +13,7 @@ before_script:
   - ./cc-test-reporter before-build
 # command to run tests
 script:
-  - python manage.py makemigrations api
-  - python manage.py migrate api
-  - coverage run --source=. -m unittest
+  - coverage run --source=. manage.py test
   - coverage xml
   - coveralls
 after_script:

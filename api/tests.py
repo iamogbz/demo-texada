@@ -35,12 +35,7 @@ class EnviromentTest(SimpleTestCase):
 
 class FixtureTestCase(APITestCase):
     # fixtures to load for testing
-    fixtures = ['initial_data_api.json']
-
-    def test_fixture_loaded(self):
-        # test that fixture loaded for testing
-        package = Package.objects.get(id=2)
-        self.assertIsNotNone(package)
+    fixtures = ['initial_data_api.json', 'initial_data_auth.json']
 
 
 class PackageModelTest(FixtureTestCase):

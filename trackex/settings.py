@@ -149,3 +149,8 @@ STATIC_ROOT = os.path.join(BASE_DIR,'trackex/static')
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR, 'static'),
 )
+
+# fixture files not in *appnames*/fixtures
+FIXTURE_DIRS = (
+   'trackex/fixtures/',
+)
