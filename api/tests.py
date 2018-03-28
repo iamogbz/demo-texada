@@ -55,11 +55,10 @@ class PackageModelTest(FixtureTestCase):
         long_desc = ''.join(random.choice(string.ascii_lowercase)
                             for x in range(limit + 1))
         package = Package(description=long_desc)
-        try:
+        fail_msg = 'Descriptor longer than {0} chars allowed'
+        with self.assertRaises(utils.DataError,
+                               msg=fail_msg.format(limit)):
             package.save()
-            self.fail('Descriptor longer than {0} chars allowed'.format(limit))
-        except utils.DataError:
-            pass
 
     def test_can_persist_model(self):
         package = Package(description='short description')
@@ -76,11 +75,9 @@ class PackageModelTest(FixtureTestCase):
         package = Package.objects.get(id=2)
         statuses = Status.objects.filter(package=package).delete()
         package.delete()
-        try:
+        with self.assertRaises(exceptions.ObjectDoesNotExist,
+                               msg='Package was not deleted'):
             package.refresh_from_db()
-            self.fail('Package was not deleted')
-        except exceptions.ObjectDoesNotExist:
-            pass
 
 
 class StatusModelTest(FixtureTestCase):
@@ -119,13 +116,11 @@ class StatusModelTest(FixtureTestCase):
         for k in data:
             if k in valid_data:
                 data[k] = valid_data[k]
-            try:
-                status = Status(package=pkg, **data)
+            status = Status(package=pkg, **data)
+            with self.assertRaises(decimal.InvalidOperation,
+                                   msg=fail_msg.format(data)):
                 with transaction.atomic():
                     status.save()
-                self.fail(fail_msg.format(data))
-            except decimal.InvalidOperation:
-                pass
 
 
 class ApiEndpointsTest(FixtureTestCase):
