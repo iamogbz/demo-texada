@@ -30,12 +30,12 @@ class PackageViewSet(viewsets.ModelViewSet):
             return response
 
     def get_serializer_class(self):
-        if self.action == 'get_tracking':
+        if self.action == 'tracking':
             return PackageStatusSerializer
-        return super().get_serializer_class()
+        else: return super().get_serializer_class()
 
     @detail_route(methods=['GET', 'POST'], url_path='tracking')
-    def get_tracking(self, request, pk, format=None):
+    def tracking(self, request, pk, format=None):
         """
         Handle showing and updating of tracking information
         """
