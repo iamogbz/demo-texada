@@ -1,5 +1,4 @@
 import os
-import prepare
 import string
 import random
 import decimal
