@@ -10,13 +10,14 @@ Built for [Texada Software](https://texadasoftware.com/)
 
 - Make sure you have **Python 3.6+** installed. If you need [installation help.](http://docs.python-guide.org/en/latest/starting/installation/)
 - Create `.env` file using `.env.example`. All values are important.
-- Import quick start data into database (developed and tested with **MySQL 5.7** but should play well with others)
-  - `mysql [DATABASE NAME] < [PROJECT DIR]/initial_data_quickstart.sql -u [USER] -p`
 - Make sure python has all requirements installed
   - `pip install -r requirements.txt`
-- Add api module models to database
-  - `python manage.py makemigrations api`
-  - `python manage.py migrate api`
+- Run database migrations
+  - `python manage.py makemigrations`
+  - `python manage.py migrate`
+- Import quick start data
+  - `python manage.py loaddata trackex/fixtures/initial_data_auth.json`
+  - `python manage.py loaddata api/fixtures/initial_data_api.json`
 
 ## Ready Set Go
 
@@ -41,9 +42,9 @@ Built for [Texada Software](https://texadasoftware.com/)
 ## Wait Hold Up
 
 - One way to run tests
-  - `python -m unittest`
+  - `python manage.py test`
 - For coverage analysis
-  - `coverage run —source=. -m unittest`
+  - `coverage run --source=. manage.py test`
   - `coverage report -m`
 
 [![Build Status](https://travis-ci.org/iamogbz/demo-texada.svg?branch=master)](https://travis-ci.org/iamogbz/demo-texada)
