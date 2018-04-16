@@ -5,6 +5,7 @@ Built for [Texada Software](https://texadasoftware.com/)
 [![Build Status](https://travis-ci.org/iamogbz/demo-texada.svg?branch=master)](https://travis-ci.org/iamogbz/demo-texada)
 [![Coverage Status](https://coveralls.io/repos/github/iamogbz/demo-texada/badge.svg?branch=master)](https://coveralls.io/github/iamogbz/demo-texada?branch=master)
 [![Maintainability](https://api.codeclimate.com/v1/badges/4c2b22402ea39b2360f8/maintainability)](https://codeclimate.com/github/iamogbz/demo-texada/maintainability)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/ce2937145fc34d54a420688976398f7e)](https://www.codacy.com/app/iamogbz/demo-texada)
 
 ## On Your Marks
 
@@ -50,3 +51,4 @@ Built for [Texada Software](https://texadasoftware.com/)
 [![Build Status](https://travis-ci.org/iamogbz/demo-texada.svg?branch=master)](https://travis-ci.org/iamogbz/demo-texada)
 [![Coverage Status](https://coveralls.io/repos/github/iamogbz/demo-texada/badge.svg?branch=master)](https://coveralls.io/github/iamogbz/demo-texada?branch=master)
 [![Maintainability](https://api.codeclimate.com/v1/badges/4c2b22402ea39b2360f8/maintainability)](https://codeclimate.com/github/iamogbz/demo-texada/maintainability)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/ce2937145fc34d54a420688976398f7e)](https://www.codacy.com/app/iamogbz/demo-texada)
