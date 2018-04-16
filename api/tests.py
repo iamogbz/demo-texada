@@ -4,7 +4,6 @@ import random
 import decimal
 
 from django.test import SimpleTestCase
-from django.test import TestCase
 from django.core import exceptions
 from django.db import transaction
 from django.db import utils
@@ -72,7 +71,7 @@ class PackageModelTest(FixtureTestCase):
 
     def test_can_delete_model(self):
         package = Package.objects.get(id=2)
-        statuses = Status.objects.filter(package=package).delete()
+        Status.objects.filter(package=package).delete()
         package.delete()
         with self.assertRaises(exceptions.ObjectDoesNotExist,
                                msg='Package was not deleted'):
@@ -225,7 +224,7 @@ class ApiEndpointsTest(FixtureTestCase):
         self.assert_http(response, status.HTTP_400_BAD_REQUEST,
                          "Package with tracking info wrongly deleted")
         pkg = Package.objects.get(id=2)
-        statuses = Status.objects.filter(package=pkg).delete()
+        Status.objects.filter(package=pkg).delete()
         response = self.client.delete(url)
         self.assert_http(response, status.HTTP_204_NO_CONTENT,
                          "Wrong http status for successful deletion")

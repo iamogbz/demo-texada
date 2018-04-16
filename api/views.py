@@ -1,8 +1,7 @@
-from django.http import JsonResponse
 from django.db.models import ProtectedError
-from rest_framework import generics, mixins, status, views, viewsets
+from rest_framework import mixins, status, views, viewsets
 from rest_framework.exceptions import APIException
-from rest_framework.decorators import detail_route, list_route
+from rest_framework.decorators import detail_route
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.response import Response
 from rest_framework.views import exception_handler
@@ -22,7 +21,7 @@ class PackageViewSet(viewsets.ModelViewSet):
     def destroy(self, request, *args, **kwargs):
         try:
             return super().destroy(request, *args, **kwargs)
-        except ProtectedError as exception:
+        except ProtectedError:
             detail = 'Can not delete package with tracking information'
             exc = APIException(detail)
             exc.status_code = status.HTTP_400_BAD_REQUEST
@@ -35,7 +34,7 @@ class PackageViewSet(viewsets.ModelViewSet):
         else: return super().get_serializer_class()
 
     @detail_route(methods=['GET', 'POST'], url_path='tracking')
-    def tracking(self, request, pk, format=None):
+    def tracking(self, request, pk=None):
         """
         Handle showing and updating of tracking information
         """
