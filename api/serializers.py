@@ -1,9 +1,15 @@
+"""
+Define api model serializers
+"""
+
 from rest_framework import serializers
 from .models import Package, Status
 
 
 class StatusSerializer(serializers.HyperlinkedModelSerializer):
-
+    """
+    Serializer for package status
+    """
     class Meta:
         model = Status
         fields = ('id', 'package', 'latitude',
@@ -11,7 +17,10 @@ class StatusSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class PackageStatusSerializer(StatusSerializer):
-
+    """
+    Serializer for package status
+    shown in package resource endpoint
+    """
     class Meta:
         model = Status
         fields = ('id', 'package', 'latitude',
@@ -26,6 +35,10 @@ class PackageStatusSerializer(StatusSerializer):
 
 
 class PackageSerializer(serializers.ModelSerializer):
+    """
+    Serializer for package
+    """
+
     tracking = PackageStatusSerializer(many=True, read_only=True)
     status = serializers.HyperlinkedIdentityField(
         view_name='package-tracking')

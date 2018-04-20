@@ -1,3 +1,5 @@
-from django.contrib import admin
+"""
+Register models to be accessed by admin here
+"""
 
-# Register your models here.
+from django.contrib import admin

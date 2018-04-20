@@ -1,3 +1,7 @@
+"""
+Api views module
+"""
+
 from django.db.models import ProtectedError
 from rest_framework import mixins, status, viewsets
 from rest_framework.exceptions import APIException
@@ -6,8 +10,15 @@ from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.response import Response
 from rest_framework.views import exception_handler
 
-from .models import Package, Status
-from .serializers import *
+from .models import (
+    Package,
+    Status,
+)
+from .serializers import (
+    PackageSerializer,
+    PackageStatusSerializer,
+    StatusSerializer,
+)
 
 
 class PackageViewSet(viewsets.ModelViewSet):
@@ -30,21 +41,23 @@ class PackageViewSet(viewsets.ModelViewSet):
 
     def get_serializer_class(self):
         if self.action == 'tracking':
-            return PackageStatusSerializer
-        else: return super().get_serializer_class()
+            serializer_class = PackageStatusSerializer
+        else:
+            serializer_class = super().get_serializer_class()
+        return serializer_class
 
     @detail_route(methods=['GET', 'POST'], url_path='tracking')
     def tracking(self, request, pk=None):
         """
         Handle showing and updating of tracking information
         """
-        if (request.method == 'GET'):
+        if request.method == 'GET':
             statuses = self.paginate_queryset(
                 Status.objects.filter(package=pk))
             serializer = PackageStatusSerializer(
                 statuses, many=True, context={'request': request})
-            return self.get_paginated_response(serializer.data)
-        elif (request.method == 'POST'):
+            response = self.get_paginated_response(serializer.data)
+        elif request.method == 'POST':
             data = request.data.copy()
             data['package'] = PackageSerializer(
                 self.get_object(), context={'request': request}).data['url']
@@ -52,8 +65,10 @@ class PackageViewSet(viewsets.ModelViewSet):
                 data=data, context={'request': request})
             if serializer.is_valid():
                 serializer.save()
-                return Response(serializer.data, status=status.HTTP_201_CREATED)
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+                response = Response(serializer.data, status=status.HTTP_201_CREATED)
+            else:
+                response = Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return response
 
 
 class StatusViewSet(mixins.RetrieveModelMixin,

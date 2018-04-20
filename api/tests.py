@@ -1,17 +1,25 @@
+"""
+Test functionality in api module
+"""
+
 import os
-import string
-import random
 import decimal
 
 from django.test import SimpleTestCase
 from django.core import exceptions
-from django.db import transaction
-from django.db import utils
-from .models import *
+from django.db import (
+    transaction,
+    utils,
+)
+from django.contrib.auth.models import User
 from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
-from django.contrib.auth.models import User
+
+from .models import (
+    Package,
+    Status,
+)
 
 
 class EnviromentTest(SimpleTestCase):
@@ -20,19 +28,24 @@ class EnviromentTest(SimpleTestCase):
     """
 
     def test_has_database_config(self):
-        for v in ['DB_TEST', 'DB_NAME', 'DB_PASS', 'DB_USER', 'SECRET']:
-            value = os.getenv(v)
-            fail_msg = 'missing "{0}" in .env'.format(v)
+        """
+        Test database config is loaded in environment
+        """
+        for val in ['DB_TEST', 'DB_NAME', 'DB_PASS', 'DB_USER', 'SECRET']:
+            value = os.getenv(val)
+            fail_msg = 'missing "{0}" in .env'.format(val)
             self.assertIsNotNone(value, fail_msg)
-            if v == 'SECRET':
-                fail_msg = 'env {0} should be at least 16 characters'.format(v)
+            if val == 'SECRET':
+                fail_msg = 'env {0} should be at least 16 characters'.format(val)
                 self.assertGreater(len(value), 16, fail_msg)
             else:
                 self.assertIsNot(value, '', fail_msg)
 
 
 class FixtureTestCase(APITestCase):
-    # fixtures to load for testing
+    """
+    Test with defined fixtures to load for testing
+    """
     fixtures = ['initial_data_api.json', 'initial_data_auth.json']
 
 
@@ -42,6 +55,9 @@ class PackageModelTest(FixtureTestCase):
     """
 
     def test_can_build_model(self):
+        """
+        Test package model can be instantiated correctly
+        """
         desc = 'short description'
         package = Package(description=desc)
         self.assertIsNotNone(package, 'could not build package')
@@ -49,9 +65,11 @@ class PackageModelTest(FixtureTestCase):
         self.assertEqual(str(package), desc, 'package not human readable')
 
     def test_description_size_limit(self):
+        """
+        Test description is not saved if too long
+        """
         limit = 140
-        long_desc = ''.join(random.choice(string.ascii_lowercase)
-                            for x in range(limit + 1))
+        long_desc = 'x'*(limit + 1)
         package = Package(description=long_desc)
         fail_msg = 'Descriptor longer than {0} chars allowed'
         with self.assertRaises(utils.DataError,
@@ -59,6 +77,9 @@ class PackageModelTest(FixtureTestCase):
             package.save()
 
     def test_can_persist_model(self):
+        """
+        Test valid package model can be saved
+        """
         package = Package(description='short description')
         package.save()
         test_pkg = Package.objects.get(id=package.pk)
@@ -70,6 +91,9 @@ class PackageModelTest(FixtureTestCase):
         self.assertEqual(test_pkg.description, new_desc)
 
     def test_can_delete_model(self):
+        """
+        Test package can be deleted
+        """
         package = Package.objects.get(id=2)
         Status.objects.filter(package=package).delete()
         package.delete()
@@ -84,20 +108,23 @@ class StatusModelTest(FixtureTestCase):
     """
 
     def test_can_build_and_save_model(self):
+        """
+        Test status can be instantiated and saved
+        """
         pkg = Package.objects.get(id=3)
         data = {'latitude': 90, 'longitude': 180, 'elevation': 1}
-        status = Status(package=pkg, **data)
-        self.assertIsNotNone(status)
-        self.assertEqual(str(status),
+        pkg_status = Status(package=pkg, **data)
+        self.assertIsNotNone(pkg_status)
+        self.assertEqual(str(pkg_status),
                          "{0} at lat({1}) lng({2}), {3} metres high"
-                         .format(status.created, status.latitude,
-                                 status.longitude, status.elevation),
+                         .format(pkg_status.created, pkg_status.latitude,
+                                 pkg_status.longitude, pkg_status.elevation),
                          'Status fails string representation')
-        status.save()
-        self.assertIsNotNone(status.pk)
-        created = status.created
-        status.refresh_from_db()
-        self.assertEqual(created, status.created)
+        pkg_status.save()
+        self.assertIsNotNone(pkg_status.pk)
+        created = pkg_status.created
+        pkg_status.refresh_from_db()
+        self.assertEqual(created, pkg_status.created)
 
     def test_cannot_save_invalid_data(self):
         """
@@ -114,11 +141,11 @@ class StatusModelTest(FixtureTestCase):
         for k in data:
             if k in valid_data:
                 data[k] = valid_data[k]
-            status = Status(package=pkg, **data)
+            pkg_status = Status(package=pkg, **data)
             with self.assertRaises(decimal.InvalidOperation,
                                    msg=fail_msg.format(data)):
                 with transaction.atomic():
-                    status.save()
+                    pkg_status.save()
 
 
 class ApiEndpointsTest(FixtureTestCase):
@@ -127,20 +154,33 @@ class ApiEndpointsTest(FixtureTestCase):
     thus also checking serializers, views
     """
 
-    def assert_http(self, response, status, message=None):
-        self.assertEqual(response.status_code, status, message)
+    def assert_http(self, response, status_code, message=None):
+        """
+        Assert response matches status code
+        """
+        self.assertEqual(response.status_code, status_code, message)
 
     def assert_has_fields(self, resp, msg, *fields):
+        """
+        Assert response contains fields
+        If not format missing field into message pattern
+        """
         for f in fields:
             self.assertIsNotNone(resp.data[f], msg.format(f))
 
     def test_root_endpoint(self):
+        """
+        Test api root is accessible
+        """
         url = reverse('api-root')
         response = self.client.get(url)
         self.assert_http(response, status.HTTP_200_OK,
                          "Can not access api-root")
 
     def test_get_packages(self):
+        """
+        Test package list get endpoint is accessible
+        """
         url = reverse('package-list')
         response = self.client.get(url)
         self.assert_http(response, status.HTTP_200_OK,
@@ -179,6 +219,9 @@ class ApiEndpointsTest(FixtureTestCase):
                          'Package should not have tracking data')
 
     def test_get_package(self):
+        """
+        Test get specific package using id
+        """
         url = reverse('package-detail', kwargs={'pk': 99})
         response = self.client.get(url)
         self.assert_http(response, status.HTTP_404_NOT_FOUND,

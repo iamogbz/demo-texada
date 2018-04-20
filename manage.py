@@ -1,4 +1,9 @@
 #!/usr/bin/env python
+
+"""
+Manage Django project
+"""
+
 import os
 import sys
 
