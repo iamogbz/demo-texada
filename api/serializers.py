@@ -3,7 +3,10 @@ Define api model serializers
 """
 
 from rest_framework import serializers
-from .models import Package, Status
+from .models import (
+    Package,
+    Status,
+)
 
 
 class StatusSerializer(serializers.HyperlinkedModelSerializer):

@@ -2,7 +2,10 @@
 Configure the base url endpoints for trackex.api
 """
 
-from django.conf.urls import url, include
+from django.conf.urls import (
+    url,
+    include,
+)
 from rest_framework import routers
 from api import views as api_views
 

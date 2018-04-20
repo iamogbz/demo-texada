@@ -165,8 +165,8 @@ class ApiEndpointsTest(FixtureTestCase):
         Assert response contains fields
         If not format missing field into message pattern
         """
-        for f in fields:
-            self.assertIsNotNone(resp.data[f], msg.format(f))
+        for field in fields:
+            self.assertIsNotNone(resp.data[field], msg.format(field))
 
     def test_root_endpoint(self):
         """

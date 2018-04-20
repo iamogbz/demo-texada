@@ -3,7 +3,11 @@ Api views module
 """
 
 from django.db.models import ProtectedError
-from rest_framework import mixins, status, viewsets
+from rest_framework import (
+    mixins,
+    status,
+    viewsets,
+)
 from rest_framework.exceptions import APIException
 from rest_framework.decorators import detail_route
 from rest_framework.pagination import LimitOffsetPagination
